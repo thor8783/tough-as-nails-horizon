@@ -1,6 +1,6 @@
 [mod]
 id = "tough_as_nails_horizon"
-version = "0.2.0"
+version = "0.2.1"
 priority = 100
 
 [compatibility]
@@ -73,3 +73,4 @@ bindings = [
   { name = "mod_id", ty = "&str", value = "mod_id" },
   { name = "button", ty = "usize", value = "button" },
 ]
+

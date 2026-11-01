@@ -7,76 +7,48 @@ fn tan_hud(
     use horizon_client::extras::Corner;
 
     if !game.native_on(m::ID) || !game.native_playing() { return; }
-    let state = m::snapshot();
+    if !game.native_corner_shown(Corner::TopRight) { return; }
 
-    if game.native_corner_shown(Corner::BottomRight) {
-        const OUTER: [(f32, f32); 8] = [
-            (3.0, 2.0), (2.0, 4.0), (1.0, 6.0), (0.0, 8.0),
-            (0.0, 8.0), (1.0, 6.0), (2.0, 4.0), (3.0, 2.0),
-        ];
-        const INNER: [(f32, f32); 6] = [
-            (3.0, 2.0), (2.0, 4.0), (1.0, 6.0),
-            (1.0, 6.0), (2.0, 4.0), (3.0, 2.0),
-        ];
-        let width = 146.0;
-        let height = 16.0;
-        let (x, y) = corners.place(Corner::BottomRight, width, height);
-        game.native_fill(batch, [x, y, width, height], 0x7800_0000);
+    const SCALE: f32 = 2.0;
+    const STEP: f32 = 21.0;
+    const OUTER: [(u8, u8); 10] = [
+        (3, 2), (2, 4), (1, 6), (1, 6), (0, 8),
+        (0, 8), (1, 6), (1, 6), (2, 4), (3, 2),
+    ];
+    const INNER: [(u8, u8); 10] = [
+        (0, 0), (3, 2), (2, 4), (2, 4), (1, 6),
+        (1, 6), (1, 6), (2, 4), (3, 2), (0, 0),
+    ];
 
-        let hydration = state.hydration.clamp(0.0, 100.0);
-        let liquid = if hydration <= 15.0 {
-            0xFFFF_5B5B
-        } else if hydration <= 35.0 {
-            0xFFFF_C857
-        } else {
-            0xFF48_B8FF
-        };
-        for icon in 0..10 {
-            let icon_x = x + 4.0 + icon as f32 * 10.0;
-            for (row, (offset, row_width)) in OUTER.iter().copied().enumerate() {
-                game.native_fill(
-                    batch,
-                    [icon_x + offset, y + 4.0 + row as f32, row_width, 1.0],
-                    0xFF12_1D28,
-                );
-            }
-            let fraction = (hydration / 10.0 - icon as f32).clamp(0.0, 1.0);
-            let filled_rows = (fraction * INNER.len() as f32).round() as usize;
-            let first_filled = INNER.len().saturating_sub(filled_rows);
-            for (row, (offset, row_width)) in INNER.iter().copied().enumerate() {
-                let color = if row >= first_filled { liquid } else { 0xFF54_606C };
-                game.native_fill(
-                    batch,
-                    [icon_x + offset, y + 5.0 + row as f32, row_width, 1.0],
-                    color,
-                );
+    let width = STEP * 10.0 - 1.0;
+    let height = SCALE * OUTER.len() as f32;
+    let (x, y) = corners.place(Corner::TopRight, width, height);
+    let hydration = m::snapshot().hydration.clamp(0.0, 100.0);
+    let blue = if hydration <= 15.0 { 0xFFFF_6262 } else if hydration <= 35.0 { 0xFFFF_C95E } else { 0xFF16_8DFF };
+
+    for icon in 0..10 {
+        let icon_x = x + icon as f32 * STEP;
+        let fraction = (hydration / 10.0 - icon as f32).clamp(0.0, 1.0);
+        let filled_rows = (fraction * 8.0).round() as usize;
+        for row in 0..OUTER.len() {
+            let (outer_start, outer_width) = OUTER[row];
+            game.native_fill(
+                batch,
+                [icon_x + f32::from(outer_start) * SCALE, y + row as f32 * SCALE,
+                 f32::from(outer_width) * SCALE, SCALE],
+                0xFF0B_1930,
+            );
+
+            let (inner_start, inner_width) = INNER[row];
+            if inner_width == 0 { continue; }
+            let is_filled = row >= 9usize.saturating_sub(filled_rows);
+            let color = if is_filled { blue } else { 0xFF3C_526C };
+            let inner_x = icon_x + f32::from(inner_start) * SCALE;
+            let inner_y = y + row as f32 * SCALE;
+            game.native_fill(batch, [inner_x, inner_y, f32::from(inner_width) * SCALE, SCALE], color);
+            if is_filled && inner_width >= 4 {
+                game.native_fill(batch, [inner_x + SCALE, inner_y, SCALE, SCALE], 0xFF83_CEFF);
             }
         }
-        let label = format!("{:>3.0}%", hydration);
-        game.native_text(batch, &label, [x + 108.0, y + 4.0], 0xFFFFFF, true);
-    }
-
-    if game.native_corner_shown(Corner::TopRight) {
-        let width = 88.0;
-        let height = 16.0;
-        let (x, y) = corners.place(Corner::TopRight, width, height);
-        game.native_fill(batch, [x, y, width, height], 0x7800_0000);
-
-        let temperature = state.body_temperature.clamp(0.0, 100.0);
-        let color = if temperature <= 30.0 {
-            0xFF55_BCFF
-        } else if temperature >= 70.0 {
-            0xFFFF_7650
-        } else {
-            0xFFFF_D06A
-        };
-        game.native_fill(batch, [x + 4.0, y + 3.0, 4.0, 8.0], 0xFF12_1D28);
-        game.native_fill(batch, [x + 3.0, y + 10.0, 6.0, 4.0], 0xFF12_1D28);
-        let filled = (temperature / 100.0 * 7.0).round().clamp(1.0, 7.0);
-        game.native_fill(batch, [x + 5.0, y + 10.0 - filled, 2.0, filled], color);
-        game.native_fill(batch, [x + 5.0, y + 11.0, 2.0, 2.0], color);
-
-        let label = format!("BODY {:>3.0}%", temperature);
-        game.native_text(batch, &label, [x + 13.0, y + 4.0], 0xFFFFFF, true);
     }
 }

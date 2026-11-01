@@ -1,9 +1,10 @@
 {
   "schema": 1,
   "id": "tough_as_nails_horizon",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "game": "26.3",
   "horizon": "a46ce6898bd72016e061aaec1afc1375b384deac",
   "mixins": "0d6b103c70633d8fd9443d8d0acd3aadaacedb06",
   "hooks": 2
 }
+

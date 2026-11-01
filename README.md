@@ -6,13 +6,14 @@ Thirst and environmental exposure prototype for Horizon 26.3.
 
 - Hydration meter with gradual depletion while moving
 - Hydration remains steady while standing still
-- Original pixel droplet HUD plus body-temperature gauge
+- Large blue droplet row styled like the survival HUD
+- No body-temperature percentage on the right side
 - Exposure estimate based on altitude, movement, weather and time of day
 - `/tan drink` test command and basic dehydration, heat and cold damage
 
 ## Install
 
-Download `ToughAsNails-Horizon-0.2.0.hnmod` and add it through Horizon's native
+Download `ToughAsNails-Horizon-0.2.1.hnmod` and add it through Horizon's native
 mod manager.
 
 ## Compatibility
@@ -23,6 +24,7 @@ mod manager.
 
 ## Status
 
-This is an early prototype, not a complete recreation of the Fabric mod. It has
-not been compiled or tested in the Horizon launcher. Horizon native mods are
+This is an early prototype, not a complete recreation of the Fabric mod. The
+0.2.1 HUD update has not yet been rebuilt in the Horizon launcher. Horizon native mods are
 unrestricted native code; review before installing.
+

@@ -2,7 +2,7 @@ use std::cell::RefCell;
 
 pub const ID: &str = "tough_as_nails_horizon";
 pub const NAME: &str = "Tough As Nails: Horizon";
-pub const VERSION: &str = "0.2.0";
+pub const VERSION: &str = "0.2.1";
 pub const DESCRIPTION: &str = "Hydration and environmental exposure survival systems.";
 
 #[derive(Clone, Copy, Debug, PartialEq)]
@@ -98,3 +98,4 @@ fn target_temperature(e: Exposure) -> f32 {
 pub fn settings_labels(enabled: bool) -> Vec<String> {
     vec![format!("Survival simulation: {}", if enabled { "ON" } else { "OFF" })]
 }
+
