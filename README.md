@@ -24,7 +24,9 @@ mod manager.
 
 ## Status
 
-This is an early prototype, not a complete recreation of the Fabric mod. The
-0.2.1 HUD update has not yet been rebuilt in the Horizon launcher. Horizon native mods are
-unrestricted native code; review before installing.
+This is an early prototype, not a complete recreation of the Fabric mod. Version
+0.2.1 built successfully in the Horizon launcher; the updated HUD has not yet
+been visually checked in a running world. Horizon native mods are unrestricted
+native code; review before installing.
+
 
