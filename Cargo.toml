@@ -1,0 +1,10 @@
+[package]
+name = "tough-as-nails-horizon"
+version = "0.1.0"
+edition = "2024"
+license = "MIT"
+publish = false
+description = "Independent Horizon native survival mod inspired by documented Tough As Nails gameplay."
+
+[lib]
+path = "mixins/tough_as_nails_horizon/runtime.rs"
