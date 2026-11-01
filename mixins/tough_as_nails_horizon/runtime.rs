@@ -2,7 +2,7 @@ use std::cell::RefCell;
 
 pub const ID: &str = "tough_as_nails_horizon";
 pub const NAME: &str = "Tough As Nails: Horizon";
-pub const VERSION: &str = "0.1.0";
+pub const VERSION: &str = "0.2.0";
 pub const DESCRIPTION: &str = "Hydration and environmental exposure survival systems.";
 
 #[derive(Clone, Copy, Debug, PartialEq)]
@@ -49,10 +49,15 @@ pub fn step(exposure: Exposure) -> State {
         let mut state = cell.borrow_mut();
         state.ticks = state.ticks.saturating_add(1);
 
-        let exertion = exposure.movement.clamp(0.0, 1.0)
-            + if exposure.sprinting { 0.8 } else { 0.0 }
-            + if exposure.swimming { 0.2 } else { 0.0 };
-        state.hydration = (state.hydration - (0.0025 + exertion * 0.0025)).max(0.0);
+        let movement = exposure.movement.clamp(0.0, 1.0);
+        let exertion = if movement > 0.01 {
+            1.0 + movement
+                + if exposure.sprinting { 0.8 } else { 0.0 }
+                + if exposure.swimming { 0.2 } else { 0.0 }
+        } else {
+            0.0
+        };
+        state.hydration = (state.hydration - exertion * 0.0025).max(0.0);
 
         let target = target_temperature(exposure);
         state.body_temperature += (target - state.body_temperature) * 0.004;
